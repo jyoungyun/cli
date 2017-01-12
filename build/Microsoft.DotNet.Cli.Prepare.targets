@@ -28,6 +28,8 @@
     <PropertyGroup>
       <IsDesktopAvailable>False</IsDesktopAvailable>
       <IsDesktopAvailable Condition=" '$(OSName)' == 'win' ">True</IsDesktopAvailable>
+      <IsCross>False</IsCross>
+      <IsCross Condition=" !$(Rid.Contains('$(OSName)')) Or !$(Rid.Contains('$(Architecture)')) ">True</IsCross>
       <DotNetPath>$(Stage0Directory)</DotNetPath>
       <BaseOutputDirectory>$(RepoRoot)/artifacts/$(Rid)</BaseOutputDirectory>
       <ToolsOutputDirectory>$(BaseOutputDirectory)/tools</ToolsOutputDirectory>
@@ -86,7 +88,7 @@
       <BundleExtension Condition=" '$(OSName)' == 'osx' ">$(InstallerExtension)</BundleExtension>
       <BundleExtension Condition=" '$(OSName)' == 'ubuntu' ">$(InstallerExtension)</BundleExtension>
 
-      <ProductMonikerRid Condition=" '$(Rid)' == 'ubuntu.16.04-x64' Or '$(Rid)' == 'fedora.23-x64' Or '$(Rid)' == 'opensuse.13.2-x64' ">$(Rid)</ProductMonikerRid>
+      <ProductMonikerRid Condition=" '$(Rid)' == 'ubuntu.16.04-x64' Or '$(Rid)' == 'fedora.23-x64' Or '$(Rid)' == 'opensuse.13.2-x64' Or '$(Rid)' == 'ubuntu.14.04-arm'">$(Rid)</ProductMonikerRid>
       <ProductMonikerRid Condition=" '$(ProductMonikerRid)' == '' ">$(OSName)-$(Architecture)</ProductMonikerRid>
 
       <DynamicLibPrefix>lib</DynamicLibPrefix>
@@ -140,21 +142,21 @@
       </_DownloadAndExtractItem>
 
       <_DownloadAndExtractItem Include="DownloadedSharedFrameworkInstallerFile"
-                               Condition="!Exists('$(DownloadedSharedFrameworkInstallerFile)') And '$(InstallerExtension)' != ''">
+                               Condition="!Exists('$(DownloadedSharedFrameworkInstallerFile)') And '$(InstallerExtension)' != '' And '$(IsCross)' == 'False'">
         <Url>$(CoreSetupInstallerBlobRootUrl)/$(SharedFrameworkVersion)/$(DownloadedSharedFrameworkInstallerFileName)</Url>
         <DownloadFileName>$(DownloadedSharedFrameworkInstallerFile)</DownloadFileName>
         <ExtractDestination></ExtractDestination>
       </_DownloadAndExtractItem>
 
       <_DownloadAndExtractItem Include="DownloadedSharedHostInstallerFile"
-                               Condition="!Exists('$(DownloadedSharedHostInstallerFile)') And '$(InstallerExtension)' != ''">
+                               Condition="!Exists('$(DownloadedSharedHostInstallerFile)') And '$(InstallerExtension)' != '' And '$(IsCross)' == 'False'">
         <Url>$(CoreSetupInstallerBlobRootUrl)/$(SharedHostVersion)/$(DownloadedSharedHostInstallerFileName)</Url>
         <DownloadFileName>$(DownloadedSharedHostInstallerFile)</DownloadFileName>
         <ExtractDestintation></ExtractDestintation>
       </_DownloadAndExtractItem>
 
       <_DownloadAndExtractItem Include="DownloadedHostFxrInstallerFile"
-                               Condition="!Exists('$(DownloadedHostFxrInstallerFile)') And '$(InstallerExtension)' != ''">
+                               Condition="!Exists('$(DownloadedHostFxrInstallerFile)') And '$(InstallerExtension)' != '' And '$(IsCross)' == 'False'">
         <Url>$(CoreSetupInstallerBlobRootUrl)/$(HostFxrVersion)/$(DownloadedHostFxrInstallerFileName)</Url>
         <DownloadFileName>$(DownloadedHostFxrInstallerFile)</DownloadFileName>
         <ExtractDestintation></ExtractDestintation>
@@ -165,9 +167,13 @@
   <Target Name="DownloadHostAndSharedFxArtifacts"
           DependsOnTargets="SetupDownloadHostAndSharedFxInputsOutputs">
 
-    <DownloadFile Condition=" '@(_DownloadAndExtractItem)' != '' "
+    <DownloadFile Condition=" '@(_DownloadAndExtractItem)' != '' And '$(IsCross)' == 'False'"
                   Uri="%(_DownloadAndExtractItem.Url)"
                   DestinationPath="%(_DownloadAndExtractItem.DownloadFileName)" />
+
+    <Copy Condition=" '$(IsCross)' == 'True' "
+          SourceFiles="$(RepoRoot)/testsource/$(CombinedFrameworkHostCompressedFileName)"
+          DestinationFiles="$(CombinedSharedHostAndFrameworkArchive)" />
 
     <ZipFileExtractToDirectory Condition=" '%(_DownloadAndExtractItem.ExtractDestination)' != '' AND '$(OSName)' == 'win' "
                                SourceArchive="%(_DownloadAndExtractItem.DownloadFileName)"
@@ -212,7 +218,7 @@
 
     <CallTarget Targets="CleanToolsLockFiles" />
 
-    <DotNetRestore ToolPath="$(DotNetPath)" 
+    <DotNetRestore ToolPath="$(DotNetPath)"
                    ProjectPath="&quot;%(RestoreToolsPackagesInput.FullPath)&quot;" />
 
   </Target>

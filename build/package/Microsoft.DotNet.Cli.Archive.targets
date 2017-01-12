@@ -20,7 +20,8 @@
     <TarGzFileCreateFromDirectory
         Condition=" '$(OSName)' != 'win' "
         SourceDirectory="%(GenerateArchivesInputsOutputs.InputDirectory)"
-        DestinationArchive="$(GenerateArchivesDestinationArchive)" />
+        DestinationArchive="$(GenerateArchivesDestinationArchive)"
+        OverwriteDestination="true"/>
 
     <ItemGroup>
       <Archives Include="$(GenerateArchivesDestinationArchive)" />

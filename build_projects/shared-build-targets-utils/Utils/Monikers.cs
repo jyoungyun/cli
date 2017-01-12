@@ -13,6 +13,8 @@ namespace Microsoft.DotNet.Cli.Build
         {
             switch (RuntimeEnvironment.GetRuntimeIdentifier())
             {
+                case "ubuntu.14.04-arm":
+                    return "Ubuntu_14_04_arm";
                 case "ubuntu.16.04-x64":
                     return "Ubuntu_16_04_x64";
                 case "fedora.23-x64":

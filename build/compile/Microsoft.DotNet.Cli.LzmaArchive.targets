@@ -5,6 +5,7 @@
                               DownloadNuGetPackagesArchive;
                               GenerateNuGetPackagesArchive;
                               UploadNuGetPackagesArchiveToAzure"
+            Condition=" '$(IsCross)' == 'False' "
             Inputs="$(IntermediateArchive)"
             Outputs="$(FinalArchive)">
       <Copy SourceFiles="$(IntermediateArchive)" DestinationFiles="$(FinalArchive)" />

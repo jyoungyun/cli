@@ -158,8 +158,8 @@
             NewName="%(BundledTools.Identity).deps.json" />
 
       <!-- cleanup project output we don't need -->
-      <Delete Files="$(SdkOutputDirectory)/redist%(PublishOutputExtensions.Identity)" />
-      <Delete Files="$(SdkOutputDirectory)/tool_msbuild%(PublishOutputExtensions.Identity)" />
+      <Delete Condition=" '$(IsCross)' == 'False'" Files="$(SdkOutputDirectory)/redist%(PublishOutputExtensions.Identity)" />
+      <Delete Condition=" '$(IsCross)' == 'False'" Files="$(SdkOutputDirectory)/tool_msbuild%(PublishOutputExtensions.Identity)" />
 
       <!-- Copy Host to SDK Directory -->
       <Copy SourceFiles="$(SharedFrameworkNameVersionPath)/$(DotnetHostBaseName)"
