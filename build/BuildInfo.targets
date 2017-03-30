@@ -13,6 +13,8 @@
       <Architecture Condition=" '$(Architecture)' == '' ">x64</Architecture>
       <OSName Condition=" '$(OSName)' == '' ">$(HostOSName)</OSName>
       <OSPlatform Condition=" '$(OSPlatform)' == '' ">$(HostOSPlatform)</OSPlatform>
+      <IsCross>False</IsCross>
+      <IsCross Condition=" '$(Rid)' != '$(HostRid)' ">True</IsCross>
 
       <BuildInfoPropsContent>
 &lt;Project ToolsVersion=&quot;15.0&quot;&gt;
@@ -21,6 +23,7 @@
         &lt;Architecture&gt;$(Architecture)&lt;/Architecture&gt;
         &lt;OSName&gt;$(OSName)&lt;/OSName&gt;
         &lt;OSPlatform&gt;$(OSPlatform)&lt;/OSPlatform&gt;
+        &lt;IsCross&gt;$(IsCross)&lt;/IsCross&gt;
     &lt;/PropertyGroup&gt;
 &lt;/Project&gt;
       </BuildInfoPropsContent>

@@ -148,12 +148,13 @@
   </Target>
 
   <Target Name="PublishLzmaArchive"
+          Condition=" '$(IsCross)' == 'False' "
           DependsOnTargets="GetNuGetPackagesArchive"
           AfterTargets="Publish">
   </Target>
 
   <Target Name="CrossgenPublishDir"
-          Condition=" '$(DISABLE_CROSSGEN)' == '' "
+          Condition=" '$(IsCross)' == 'False' "
           AfterTargets="PublishMSBuildExtensions">
     <ItemGroup>
       <!-- Removing Full CLR built TestHost assemblies from getting Crossgen as it is throwing error -->
